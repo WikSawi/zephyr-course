@@ -2,6 +2,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/sensor.h>
+#include "task2_led_driver.h"
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
@@ -15,6 +16,12 @@ int main(void)
         return -ENODEV;
     }
     struct sensor_value val;
+    int brightness = 50; 
+    ret = led_driver_set_brightness(driver, brightness);
+    if (ret < 0) {
+        LOG_ERR("Failed to set LED brightness (%d)", ret);
+        return ret;
+    }
 
     while (1) {
         ret = sensor_sample_fetch(driver);

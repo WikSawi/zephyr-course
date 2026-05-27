@@ -1,6 +1,7 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
+#include "task2_led_driver.h"
 
 #define DT_DRV_COMPAT led_driver
 
@@ -9,6 +10,26 @@
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 
 LOG_MODULE_REGISTER(led_driver, LOG_LEVEL_INF);
+
+struct led_driver_data {
+    int brightness;
+};
+
+static struct led_driver_data led_driver_brightness_data;
+
+int led_driver_set_brightness(const struct device *dev, int brightness) {
+    struct led_driver_data *data = dev->data;
+
+    if (brightness < 0 || brightness > 100) {
+        LOG_ERR("Brightness value out of range: %d", brightness);
+        return -EINVAL;
+    }
+
+    data->brightness = brightness;
+    LOG_INF("LED brightness set to %d", brightness);
+
+    return 0;
+}
 
 static int led_driver_channel_get(const struct device *dev, 
                      enum sensor_channel chan, 
@@ -55,5 +76,5 @@ static int init(const struct device *dev) {
     return 0;
 }
 
-DEVICE_DT_INST_DEFINE(0, init, NULL, NULL, NULL, POST_KERNEL,
+DEVICE_DT_INST_DEFINE(0, init, NULL, &led_driver_brightness_data, NULL, POST_KERNEL,
               80, &led_driver_api);
