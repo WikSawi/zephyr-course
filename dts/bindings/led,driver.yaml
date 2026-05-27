@@ -1,0 +1,8 @@
+description: Device tree binding for a simple LED driver.
+include: base.yaml
+
+properties:
+  gpios:
+    type: phandle-array
+    required: true
+    description: "sensor used as LED control"

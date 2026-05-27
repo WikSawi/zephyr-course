@@ -1,0 +1,5 @@
+config LED_DRIVER
+    bool "LED Driver"
+    default y
+    help
+      Enable support for the LED driver.
